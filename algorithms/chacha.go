@@ -10,7 +10,7 @@ type chachaCore struct {
 
 // generateNewChachaCore permits to generate a new chachaCore instance.
 // The algorithm is based on the ChaCha algorithm that uses a 256-bit key and a 64-bit nonce
-// (some algorithms use a 96-bit nonce). 
+// (some algorithms use a 96-bit nonce).
 // The number of rounds is set to 20 for the ChaCha20 algorithm and 8 for the ChaCha8 algorithm.
 func generateNewChachaCore(key []byte, nonce uint64, numberRound uint8) *chachaCore {
 	if len(key) != 32 {
@@ -77,14 +77,14 @@ func generateMatrix(key []byte, nonce uint64, blockNumber uint64) [4][4]uint32 {
 	return matrix
 }
 
-// byteCyclingShift permits to shift a byte to the left by a 
+// byteCyclingShift permits to shift a byte to the left by a
 // given number of bits in a cyclic fashion.
 func byteCyclingShift(byteValue byte, numberBitsToShift uint) byte {
 	numberBitsToShift %= 8
 	return byteValue<<numberBitsToShift | byteValue>>(8-numberBitsToShift)
 }
 
-// This functions performs the quarter round operation of the 
+// This functions performs the quarter round operation of the
 // ChaCha algorithm.
 func apply_quarter_round(aValue *uint32, bValue *uint32, cValue *uint32, dValue *uint32) {
 	*aValue += *bValue
@@ -136,37 +136,37 @@ func (c *chachaCore) getChaChaBlock() [4][4]uint32 {
 			&c.transformed_matrix[2][3],
 			&c.transformed_matrix[3][3],
 		)
-	}
 
-	// Even Round
-	// First Diagonal
-	apply_quarter_round(
-		&c.transformed_matrix[0][0],
-		&c.transformed_matrix[1][1],
-		&c.transformed_matrix[2][2],
-		&c.transformed_matrix[3][3],
-	)
-	// Second Diagonal
-	apply_quarter_round(
-		&c.transformed_matrix[0][1],
-		&c.transformed_matrix[1][2],
-		&c.transformed_matrix[2][3],
-		&c.transformed_matrix[3][0],
-	)
-	// Third Diagonal
-	apply_quarter_round(
-		&c.transformed_matrix[0][2],
-		&c.transformed_matrix[1][3],
-		&c.transformed_matrix[2][0],
-		&c.transformed_matrix[3][1],
-	)
-	// Fourth Diagonal
-	apply_quarter_round(
-		&c.transformed_matrix[0][3],
-		&c.transformed_matrix[1][0],
-		&c.transformed_matrix[2][1],
-		&c.transformed_matrix[3][2],
-	)
+		// Even Round
+		// First Diagonal
+		apply_quarter_round(
+			&c.transformed_matrix[0][0],
+			&c.transformed_matrix[1][1],
+			&c.transformed_matrix[2][2],
+			&c.transformed_matrix[3][3],
+		)
+		// Second Diagonal
+		apply_quarter_round(
+			&c.transformed_matrix[0][1],
+			&c.transformed_matrix[1][2],
+			&c.transformed_matrix[2][3],
+			&c.transformed_matrix[3][0],
+		)
+		// Third Diagonal
+		apply_quarter_round(
+			&c.transformed_matrix[0][2],
+			&c.transformed_matrix[1][3],
+			&c.transformed_matrix[2][0],
+			&c.transformed_matrix[3][1],
+		)
+		// Fourth Diagonal
+		apply_quarter_round(
+			&c.transformed_matrix[0][3],
+			&c.transformed_matrix[1][0],
+			&c.transformed_matrix[2][1],
+			&c.transformed_matrix[3][2],
+		)
+	}
 
 	for i := 0; i < 16; i++ {
 		row := uint(i / 4)
