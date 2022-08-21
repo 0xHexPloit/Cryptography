@@ -1,4 +1,4 @@
-package algorithms
+package chacha
 
 type chachaCore struct {
 	key                []byte
@@ -77,28 +77,21 @@ func generateMatrix(key []byte, nonce uint64, blockNumber uint64) [4][4]uint32 {
 	return matrix
 }
 
-// byteCyclingShift permits to shift a byte to the left by a
-// given number of bits in a cyclic fashion.
-func byteCyclingShift(byteValue byte, numberBitsToShift uint) byte {
-	numberBitsToShift %= 8
-	return byteValue<<numberBitsToShift | byteValue>>(8-numberBitsToShift)
-}
-
 // This functions performs the quarter round operation of the
 // ChaCha algorithm.
 func apply_quarter_round(aValue *uint32, bValue *uint32, cValue *uint32, dValue *uint32) {
 	*aValue += *bValue
 	*dValue ^= *aValue
-	*dValue = uint32(byteCyclingShift(byte(*dValue), 16))
+	*dValue = *dValue << 16 | *dValue >> (32 - 16)
 	*cValue += *dValue
 	*bValue ^= *cValue
-	*bValue = uint32(byteCyclingShift(byte(*bValue), 12))
+	*bValue = *bValue << 12 | *bValue >> (32 - 12)
 	*aValue += *bValue
 	*dValue ^= *aValue
-	*dValue = uint32(byteCyclingShift(byte(*dValue), 8))
+	*dValue = *dValue << 8 | *dValue >> (32 - 8)
 	*cValue += *dValue
 	*bValue ^= *cValue
-	*bValue = uint32(byteCyclingShift(byte(*bValue), 7))
+	*bValue = *bValue << 7 | *bValue >> (32 - 7)
 }
 
 // getChaChaBlock permits to obtain the matrix that is used
